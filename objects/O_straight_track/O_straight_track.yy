@@ -1,13 +1,13 @@
 {
   "$GMObject":"",
-  "%Name":"O_curve",
+  "%Name":"O_straight_track",
   "eventList":[],
   "managed":true,
-  "name":"O_curve",
+  "name":"O_straight_track",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objetos",
-    "path":"folders/Objetos.yy",
+    "name":"Tracks",
+    "path":"folders/Objetos/Tracks.yy",
   },
   "parentObjectId":null,
   "persistent":false,
@@ -28,8 +28,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"S_curve",
-    "path":"sprites/S_curve/S_curve.yy",
+    "name":"S_straight_track",
+    "path":"sprites/S_straight_track/S_straight_track.yy",
   },
   "spriteMaskId":null,
   "visible":true,

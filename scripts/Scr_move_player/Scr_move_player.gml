@@ -51,41 +51,53 @@ function Scr_move_player(){
 	var drive = keyboard_check(vk_up) or keyboard_check(ord("W"));
 	var reverse = keyboard_check(vk_down) or keyboard_check(ord("S"));
 
-	var spd = 0;
-	if (drive) spd = veloc;
-	if (reverse) spd = -veloc;
+	// --- Controle de aceleração ---
+	if (drive) {
+	    velocidade += aceleracao;
+	} else if (reverse) {
+	    velocidade -= freio;
+	} else {
+	    // desaceleração natural
+	    if (velocidade > 0) {
+	        velocidade -= desaceleracao;
+	        if (velocidade < 0) velocidade = 0;
+	    }
+	    if (velocidade < 0) {
+	        velocidade += desaceleracao;
+	        if (velocidade > 0) velocidade = 0;
+	    }
+	}
 
-	// Rotação só se o carro estiver se movendo
-	if (spd != 0) {
+	// --- Limites de velocidade ---
+	velocidade = clamp(velocidade, -veloc_max, veloc_max);
+
+	// --- Rotação só se o carro estiver se movendo ---
+	if (velocidade != 0) {
 	    if (left)  direction += 2;
 	    if (right) direction -= 2;
 	    image_angle = direction;
 	}
 
-	// --- Cálculo da posição alvo ---
-	var newx = x + lengthdir_x(spd, direction);
-	var newy = y + lengthdir_y(spd, direction);
+	// --- Movimento com colisão ---
+	var newx = x + lengthdir_x(velocidade, direction);
+	var newy = y + lengthdir_y(velocidade, direction);
 
-	// --- Colisão mais precisa ---
 	if (!place_meeting(newx, newy, O_wall)) {
-	    // livre, pode andar
 	    x = newx;
 	    y = newy;
 	} else {
-	    // move passo a passo até encostar na parede sem atravessar
-	    var steps = abs(spd); // quantos pixels vamos tentar andar
-	    var moved = false;
-
+	    // checa passo a passo até encostar
+	    var steps = abs(velocidade);
 	    repeat (steps) {
-	        var step_x = x + lengthdir_x(sign(spd) + 5, direction);
-	        var step_y = y + lengthdir_y(sign(spd) + 5, direction);
+	        var step_x = x + lengthdir_x(sign(velocidade), direction);
+	        var step_y = y + lengthdir_y(sign(velocidade), direction);
 
 	        if (!place_meeting(step_x, step_y, O_wall)) {
 	            x = step_x;
 	            y = step_y;
-	            moved = true;
 	        } else {
-	            break; // bateu, para aqui
+	            velocidade = 0; // bateu, perde velocidade
+	            break;
 	        }
 	    }
 	}
